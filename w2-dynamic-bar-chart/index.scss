@@ -1,0 +1,103 @@
+* {
+	box-sizing: border-box;
+}
+
+html {
+	width: 100%;
+	height: 100%;
+	writing-mode: vertical-lr;
+}
+
+body {
+	margin: 0;
+	padding-block: 1px;
+	padding-inline: 1rem;
+	width: 100%;
+	overflow-block: hidden;
+
+	display: flex;
+	flex-direction: column;
+}
+
+header {
+	display: flex;
+	gap: 1rem;
+	align-items: baseline;
+}
+
+main {
+	flex-grow: 1;
+	overflow-block: scroll;
+
+	position: relative;
+	margin-inline: auto;
+	inline-size: 30rem;
+	border: 1px solid black;
+	background-color: white;
+
+	$block-size: 4rem;
+
+	article {
+		position: relative;
+		margin: .8rem;
+	}
+
+	#shadows {
+		position: relative;
+		inline-size: 100%;
+		block-size: 100%;
+
+		display: flex;
+		flex-direction: column;
+		gap: .6rem;
+
+		.shadow {
+			position: relative;
+			inline-size: 100%;
+			block-size: $block-size;
+		}
+	}
+
+	#countries {
+		position: absolute;
+		top: 0;
+		left: 0;
+		inline-size: 100%;
+		block-size: 100%;
+
+		.country {
+			position: absolute;
+			top: 0;
+			left: 0;
+			inline-size: 100%;
+			block-size: $block-size;
+			
+			transform: scale(1);
+			transition: transform .7s ease-in-out;
+
+			font-size: 1.7rem;
+
+			display: grid;
+			align-items: stretch;
+			justify-items: stretch;
+
+			.bg {
+				padding-inline: .6em;
+				background-color: var(--bgColor);
+				border-radius: .3rem;
+				box-shadow: 0rem .1rem .3rem -.1rem #00000080;
+				
+				display: flex;
+				align-items: center;
+
+				.label {
+					position: relative;
+
+					&::after {
+						content: " " attr(data-medal);
+					}
+				}
+			}
+		}
+	}
+}
