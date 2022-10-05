@@ -3,3 +3,4 @@
 ## 目录
 
 - [第二周：动态条形图](w2-dynamic-bar-chart)
+- [第四周：电子商务案例分析](w4-electronic-commerce-analysis.xlsx)
