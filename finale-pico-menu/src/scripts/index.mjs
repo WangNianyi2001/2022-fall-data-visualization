@@ -2,7 +2,7 @@ import { CreateElement, FindElement, ModifyElement } from './utils.mts';
 
 (async () => {
 	const menu = await (async () => {
-		const raw = await (await fetch('/menu.md')).text();
+		const raw = await (await fetch('menu.md')).text();
 		const arr = raw.split('#').slice(1).map(entry => {
 			const index = entry.indexOf('\n');
 			const name = entry.slice(0, index);
