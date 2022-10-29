@@ -36,10 +36,23 @@ export function ModifyElement<Type extends HTMLElement>(
 	if(options.id)
 		$element.id = options.id;
 	if(options.classes?.length) {
-		if(options.classes instanceof Array)
-			$element.classList.add(...options.classes);
-		else
-			$element.classList.add(options.classes);
+		const classes = options.classes instanceof Array ? options.classes : [options.classes];
+		for(const className of classes) {
+			switch(className[0]) {
+				default:
+					$element.classList.add(className);
+					break;
+				case '+':
+					$element.classList.add(className.slice(1));
+					break;
+				case '-':
+					$element.classList.remove(className.slice(1));
+					break;
+				case '~':
+					$element.classList.toggle(className.slice(1));
+					break;
+			}
+		}
 	}
 	if(options.attributes) {
 		for(const [key, value] of Object.entries(options.attributes))

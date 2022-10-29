@@ -1,4 +1,4 @@
-import { CreateElement, FindElement, ModifyElement, ClearChild } from './utils.mts';
+import { CreateElement, FindElement, ModifyElement } from './utils.mts';
 
 (async () => {
 	const menu = await (async () => {
@@ -22,29 +22,33 @@ import { CreateElement, FindElement, ModifyElement, ClearChild } from './utils.m
 	})).map(([key, value]) => [key, new Map(value)]));
 	
 	function Load() {
-		const $menu = document.getElementById('menu');
+		const $menu = FindElement('#menu', document.body, {
+			children: Array.from(menu.values()).map(
+				entry => CreateElement('li', {
+					classes: 'entry',
+					rawAttributes: { entry },
+					children: [
+						CreateElement('span', {
+							text: entry.name
+						})
+					]
+				})
+			)
+		});
 
 		function Update() {
-			ClearChild($menu);
 			const filterCategories = Array.from(document.getElementsByClassName('category')).map(
 				$category => Array.from($category.getElementsByClassName('filter'))
 					.filter($filter => $filter.control.checked)
 					.map($filter => $filter.control.filter)
 			);
-			const filtered = Array.from(menu.values())
-				.filter(entry => filterCategories.every(
-					category => !category.length || !category.every(filter => !filter(entry))
-				));
-			ModifyElement($menu, {
-				children: filtered.map(
-					entry => CreateElement('li', {
-						children: [
-							CreateElement('span', {
-								text: entry.name
-							})
-						]
-					})
-				)
+			Array.from(document.getElementsByClassName('entry')).forEach($entry => {
+				const pass = filterCategories.every(
+					category => !category.length || !category.every(filter => !filter($entry.entry))
+				);
+				ModifyElement($entry, {
+					classes: (pass ? '-' : '+') + 'out'
+				});
 			});
 		}
 
