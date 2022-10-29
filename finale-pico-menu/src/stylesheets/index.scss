@@ -1,3 +1,22 @@
+#filters {
+	user-select: none;
+
+	.label {
+		&::after {
+			content: "：";
+		}
+	}
+	
+	.filter {
+		padding: .5em;
+		cursor: pointer;
+		
+		&:hover {
+			background-color: lightcoral;
+		}
+	}
+}
+
 .entry {
 	&.out {
 		display: none;

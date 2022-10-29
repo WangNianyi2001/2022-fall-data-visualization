@@ -12,13 +12,36 @@ import { CreateElement, FindElement, ModifyElement } from './utils.mts';
 		return new Map(arr.map(entry => [entry.name, entry]));
 	})();
 
+	const preciselyContain = str => [str, entry => entry.recipe.indexOf(str) !== -1];
+	const implicitlyContain = ([name, matches]) => [name, entry => matches.some(match => entry.recipe.indexOf(match) !== -1)];
+
 	const filterCategories = new Map(Array.from(Object.entries({
-		'基酒': [
-			'威士忌',
-			'龙舌兰',
-			'金酒',
-			'朗姆'
-		].map(name => [name, entry => entry.recipe.indexOf(name) != -1])
+		'基酒': ['威士忌', '龙舌兰', '金酒', '朗姆'].map(preciselyContain),
+		'果味': [
+			['橙子', ['橙']],
+			['西柚', ['柚']],
+			['蜜桃', ['桃']],
+			['柠檬', ['柠檬汁']],
+			['薄荷', ['薄荷']],
+			['其他', ['菠萝']],
+		].map(implicitlyContain),
+		'调味': [
+			['苦艾', ['苦艾']],
+			['牛奶', ['奶']],
+			['蛋黄', ['蛋']],
+			['利口', ['利口']],
+		].map(implicitlyContain),
+		'口味': [
+			['甜', ['甜', '奶', '巧克力', '可可', '朗姆']],
+			['酸', ['柠檬', '酸']],
+			['苦', ['苦']],
+		].map(implicitlyContain),
+		'温度': [
+			implicitlyContain(['凉', ['冰']]),
+			['常温', entry => !entry.recipe.match(/冰|热/)],
+			implicitlyContain(['热', ['热']]),
+		],
+		'装饰': ['有', '无'].map((name, i) => [name, entry => i == !entry.recipe.match(/一(个|片|颗|块)/)]),
 	})).map(([key, value]) => [key, new Map(value)]));
 	
 	function Load() {
@@ -27,11 +50,17 @@ import { CreateElement, FindElement, ModifyElement } from './utils.mts';
 				entry => CreateElement('li', {
 					classes: 'entry',
 					rawAttributes: { entry },
-					children: [
-						CreateElement('span', {
-							text: entry.name
-						})
-					]
+					children: CreateElement('details', {
+						children: [
+							CreateElement('summary', {
+								classes: 'name',
+								text: entry.name
+							}),
+							CreateElement('p', {
+								text: entry.recipe
+							})
+						]
+					})
 				})
 			)
 		});
@@ -44,7 +73,7 @@ import { CreateElement, FindElement, ModifyElement } from './utils.mts';
 			);
 			Array.from(document.getElementsByClassName('entry')).forEach($entry => {
 				const pass = filterCategories.every(
-					category => !category.length || !category.every(filter => !filter($entry.entry))
+					category => !category.length || !category.every(filter => !filter.call($entry.control, $entry.entry))
 				);
 				ModifyElement($entry, {
 					classes: (pass ? '-' : '+') + 'out'
@@ -57,6 +86,7 @@ import { CreateElement, FindElement, ModifyElement } from './utils.mts';
 				classes: ['category'],
 				children: [
 					CreateElement('span', {
+						classes: 'label',
 						text: categoryName
 					}),
 					...Array.from(filters.entries()).map(([name, filter]) => CreateElement('label', {
