@@ -1,0 +1,12 @@
+{
+	"author": "Nianyi Wang",
+	"scripts": {
+		"dev": "npx vite dev"
+	},
+	"dependencies": {
+		"vite": "^3.2.1"
+	},
+	"devDependencies": {
+		"typescript": "^4.8.4"
+	}
+}
