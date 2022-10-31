@@ -47,7 +47,7 @@ import { CreateElement, FindElement, ModifyElement } from './utils.mts';
 	})).map(([key, value]) => [key, new Map(value)]));
 	
 	function Load() {
-		const $menu = FindElement('#menu', document.body, {
+		FindElement('#menu', document.body, {
 			children: Array.from(menu.values()).map(
 				entry => CreateElement('li', {
 					classes: 'entry',
@@ -59,6 +59,7 @@ import { CreateElement, FindElement, ModifyElement } from './utils.mts';
 								text: entry.name
 							}),
 							CreateElement('p', {
+								classes: 'recipe',
 								text: entry.recipe
 							})
 						]
@@ -68,6 +69,11 @@ import { CreateElement, FindElement, ModifyElement } from './utils.mts';
 		});
 
 		function Update() {
+			Array.from(document.getElementsByClassName('filter')).forEach(
+				$filter => ModifyElement($filter, {
+					classes: ($filter.control.checked ? '+' : '-') + 'checked'
+				})
+			);
 			const filterCategories = Array.from(document.getElementsByClassName('category')).map(
 				$category => Array.from($category.getElementsByClassName('filter'))
 					.filter($filter => $filter.control.checked)
@@ -84,23 +90,25 @@ import { CreateElement, FindElement, ModifyElement } from './utils.mts';
 		}
 
 		const $filters = FindElement('#filters', document.body, {
-			children: Array.from(filterCategories.entries()).map(([categoryName, filters]) => CreateElement('p', {
+			children: Array.from(filterCategories.entries()).map(([categoryName, filters]) => CreateElement('div', {
 				classes: ['category'],
 				children: [
-					CreateElement('span', {
+					CreateElement('div', {
 						classes: 'label',
 						text: categoryName
 					}),
-					...Array.from(filters.entries()).map(([name, filter]) => CreateElement('label', {
-						classes: ['filter'],
-						text: name,
-						children: CreateElement('input', {
-							attributes: {
-								type: 'checkbox',
-							},
-							rawAttributes: { filter }
+					...Array.from(filters.entries()).map(
+						([name, filter]) => CreateElement('label', {
+							classes: ['filter'],
+							text: name,
+							children: CreateElement('input', {
+								attributes: {
+									type: 'checkbox',
+								},
+								rawAttributes: { filter }
+							})
 						})
-					}))
+					)
 				]
 			})),
 			listeners: [['change', Update]]
