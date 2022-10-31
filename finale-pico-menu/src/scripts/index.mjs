@@ -16,7 +16,9 @@ import { CreateElement, FindElement, ModifyElement } from './utils.mts';
 	const implicitlyContain = ([name, matches]) => [name, entry => matches.some(match => entry.recipe.indexOf(match) !== -1)];
 
 	const filterCategories = new Map(Array.from(Object.entries({
-		'基酒': ['威士忌', '龙舌兰', '金酒', '朗姆'].map(preciselyContain),
+		'基酒': '威士忌 伏特加 白兰地 朗姆 龙舌兰 金酒'
+			.split(' ')
+			.map(preciselyContain),
 		'果味': [
 			['橙子', ['橙']],
 			['西柚', ['柚']],
